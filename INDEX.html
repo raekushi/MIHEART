@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mathematical Heart Curve</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at center, #ffdde1, #ee9ca7);
+        font-family: Arial, sans-serif;
+    }
+
+    #heartCanvas {
+        background: transparent;
+    }
+
+    h1 {
+        position: absolute;
+        top: 20px;
+        font-size: 2rem;
+        color: white;
+        text-shadow: 0 0 10px #ff4b5c;
+    }
+</style>
+</head>
+<body>
+
+<h1>Mathematical Heart Curve</h1>
+<canvas id="heartCanvas" width="600" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("heartCanvas");
+const ctx = canvas.getContext("2d");
+
+const W = canvas.width;
+const H = canvas.height;
+
+// Scale to make the heart fit well
+const scale = 15;
+
+let t = 0;          // Parameter for animation
+let speed = 0.02;   // Animation speed
+let points = [];    // Store drawn points
+
+// Heart parametric equations
+function heartX(t) {
+    return 16 * Math.pow(Math.sin(t), 3);
+}
+
+function heartY(t) {
+    return 13 * Math.cos(t) 
+         - 5 * Math.cos(2 * t)
+         - 2 * Math.cos(3 * t)
+         - Math.cos(4 * t);
+}
+
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+    
+    ctx.beginPath();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#ff1e56";
+    ctx.shadowColor = "#ff1e56";
+    ctx.shadowBlur = 10;
+
+    // Draw all collected points
+    ctx.moveTo(points[0]?.x || 0, points[0]?.y || 0);
+    for (let p of points) {
+        ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+
+    // Add new point each frame until we complete the loop
+    if (t <= Math.PI * 2) {
+        let x = heartX(t) * scale + W / 2;
+        let y = -heartY(t) * scale + H / 2; // invert y-axis
+
+        points.push({ x, y });
+        t += speed;
+    }
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+
+</body>
+</html>
